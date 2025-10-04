@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 the original author or authors.
+ * Copyright 2020-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.core.launch.support;
+package org.springframework.batch.core.job.parameters;
 
-import org.jspecify.annotations.Nullable;
-
-import org.springframework.batch.core.job.parameters.JobParameters;
-import org.springframework.batch.core.job.parameters.JobParametersBuilder;
-import org.springframework.batch.core.job.parameters.JobParametersIncrementer;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.util.Assert;
 
@@ -52,8 +47,9 @@ public class DataFieldMaxValueJobParametersIncrementer implements JobParametersI
 	}
 
 	@Override
-	public JobParameters getNext(@Nullable JobParameters jobParameters) {
-		return new JobParametersBuilder(jobParameters == null ? new JobParameters() : jobParameters)
+	public JobParameters getNext(JobParameters jobParameters) {
+		Assert.notNull(jobParameters, "JobParameters must not be null");
+		return new JobParametersBuilder(jobParameters)
 			.addLong(this.key, this.dataFieldMaxValueIncrementer.nextLongValue())
 			.toJobParameters();
 	}
