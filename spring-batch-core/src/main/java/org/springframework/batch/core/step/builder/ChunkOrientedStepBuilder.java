@@ -440,26 +440,9 @@ public class ChunkOrientedStepBuilder<I, O> extends StepBuilderHelper<ChunkOrien
 			chunkOrientedStep.setTaskExecutor(this.asyncTaskExecutor);
 		}
 		streams.forEach(chunkOrientedStep::registerItemStream);
-		stepListeners.forEach(stepListener -> {
-			if (stepListener instanceof ItemReadListener listener) {
-				chunkOrientedStep.registerItemReadListener(listener);
-			}
-			if (stepListener instanceof ItemProcessListener listener) {
-				chunkOrientedStep.registerItemProcessListener(listener);
-			}
-			if (stepListener instanceof ItemWriteListener listener) {
-				chunkOrientedStep.registerItemWriteListener(listener);
-			}
-			if (stepListener instanceof ChunkListener listener) {
-				chunkOrientedStep.registerChunkListener(listener);
-			}
-			if (stepListener instanceof SkipListener listener) {
-				chunkOrientedStep.registerSkipListener(listener);
-			}
-			if (stepListener instanceof StepExecutionListener listener) {
-				chunkOrientedStep.registerStepExecutionListener(listener);
-			}
-		});
+		stepListeners.forEach(stepListener -> registerTypedListener(stepListener, chunkOrientedStep));
+		properties.getStepExecutionListeners()
+			.forEach(stepExecutionListener -> registerTypedListener(stepExecutionListener, chunkOrientedStep));
 		retryListeners.forEach(chunkOrientedStep::registerRetryListener);
 		skipListeners.forEach(chunkOrientedStep::registerSkipListener);
 		if (this.observationRegistry != null) {
@@ -472,6 +455,27 @@ public class ChunkOrientedStepBuilder<I, O> extends StepBuilderHelper<ChunkOrien
 			throw new StepBuilderException("Unable to build a chunk-oriented step", e);
 		}
 		return chunkOrientedStep;
+	}
+
+	private void registerTypedListener(StepListener stepListener, ChunkOrientedStep<I, O> chunkOrientedStep) {
+		if (stepListener instanceof ItemReadListener listener) {
+			chunkOrientedStep.registerItemReadListener(listener);
+		}
+		if (stepListener instanceof ItemProcessListener listener) {
+			chunkOrientedStep.registerItemProcessListener(listener);
+		}
+		if (stepListener instanceof ItemWriteListener listener) {
+			chunkOrientedStep.registerItemWriteListener(listener);
+		}
+		if (stepListener instanceof ChunkListener listener) {
+			chunkOrientedStep.registerChunkListener(listener);
+		}
+		if (stepListener instanceof SkipListener listener) {
+			chunkOrientedStep.registerSkipListener(listener);
+		}
+		if (stepListener instanceof StepExecutionListener listener) {
+			chunkOrientedStep.registerStepExecutionListener(listener);
+		}
 	}
 
 	private void addAsStreamAndListener(Object itemHandler) {
