@@ -453,6 +453,9 @@ public class ChunkOrientedStepBuilder<I, O> extends StepBuilderHelper<ChunkOrien
 			if (stepListener instanceof ChunkListener listener) {
 				chunkOrientedStep.registerChunkListener(listener);
 			}
+			if (stepListener instanceof SkipListener listener) {
+				chunkOrientedStep.registerSkipListener(listener);
+			}
 			if (stepListener instanceof StepExecutionListener listener) {
 				chunkOrientedStep.registerStepExecutionListener(listener);
 			}
