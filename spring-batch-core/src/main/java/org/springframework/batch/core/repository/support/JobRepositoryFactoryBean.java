@@ -78,15 +78,19 @@ public class JobRepositoryFactoryBean extends AbstractJobRepositoryFactoryBean i
 	protected static final Log logger = LogFactory.getLog(JobRepositoryFactoryBean.class);
 
 	/**
-	 * Classic schema name of the job instance incrementer.
+	 * Legacy (v5) name of the job instance incrementer.
 	 */
-	private static final String CLASSIC_JOB_INSTANCE_INCREMENTER_NAME = "JOB_SEQ";
+	protected static final String LEGACY_JOB_INSTANCE_INCREMENTER_NAME = "JOB_SEQ";
 
 	/**
-	 * Environment variable for using the classic schema name of the job instance
-	 * incrementer.
+	 * Environment variable for using the legacy (v5) jdbc schema.
 	 */
-	private static final String SPRING_BATCH_JDBC_SCHEMA_CLASSIC = "SPRING_BATCH_JDBC_SCHEMA_CLASSIC";
+	protected static final String SPRING_BATCH_JDBC_SCHEMA_LEGACY = "SPRING_BATCH_JDBC_SCHEMA_LEGACY";
+
+	/**
+	 * System property for using the legacy (v5) jdbc schema.
+	 */
+	protected static final String SPRING_BATCH_JDBC_SCHEMA_LEGACY_PROPERTY = "spring.batch.jdbc.schema.legacy";
 
 	protected DataSource dataSource;
 
@@ -324,16 +328,16 @@ public class JobRepositoryFactoryBean extends AbstractJobRepositoryFactoryBean i
 	@Override
 	protected JdbcJobInstanceDao createJobInstanceDao() {
 		JdbcJobInstanceDao dao = new JdbcJobInstanceDao();
-		String classicSchema = "false";
-		if (System.getenv(SPRING_BATCH_JDBC_SCHEMA_CLASSIC) != null) {
-			classicSchema = System.getenv(SPRING_BATCH_JDBC_SCHEMA_CLASSIC);
+		String legacySchema = "false";
+		if (System.getenv(SPRING_BATCH_JDBC_SCHEMA_LEGACY) != null) {
+			legacySchema = System.getenv(SPRING_BATCH_JDBC_SCHEMA_LEGACY);
 		}
-		else if (System.getProperty("spring.batch.jdbc.schema.classic") != null) {
-			classicSchema = System.getProperty("spring.batch.jdbc.schema.classic");
+		else if (System.getProperty(SPRING_BATCH_JDBC_SCHEMA_LEGACY_PROPERTY) != null) {
+			legacySchema = System.getProperty(SPRING_BATCH_JDBC_SCHEMA_LEGACY_PROPERTY);
 		}
-		if ("TRUE".equalsIgnoreCase(classicSchema) || "YES".equalsIgnoreCase(classicSchema)) {
-			jobInstanceIncrementerName = CLASSIC_JOB_INSTANCE_INCREMENTER_NAME;
-			logger.info("Using classic schema job instance incrementer name of " + jobInstanceIncrementerName);
+		if ("TRUE".equalsIgnoreCase(legacySchema) || "YES".equalsIgnoreCase(legacySchema)) {
+			jobInstanceIncrementerName = LEGACY_JOB_INSTANCE_INCREMENTER_NAME;
+			logger.info("Using legacy name for job instance incrementer: " + jobInstanceIncrementerName);
 		}
 		dao.setJdbcTemplate(jdbcOperations);
 		dao.setJobInstanceIncrementer(
