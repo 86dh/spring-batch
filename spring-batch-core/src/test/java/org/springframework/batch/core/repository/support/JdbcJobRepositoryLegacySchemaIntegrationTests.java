@@ -50,6 +50,8 @@ public class JdbcJobRepositoryLegacySchemaIntegrationTests extends AbstractJobRe
 	public void setUp() throws Exception {
 		try (Connection connection = dataSource.getConnection()) {
 			ScriptUtils.executeSqlScript(connection,
+					new FileSystemResource("src/test/resources/schema-drop-hsqldb-legacy.sql"));
+			ScriptUtils.executeSqlScript(connection,
 					new FileSystemResource("src/test/resources/schema-hsqldb-legacy.sql"));
 		}
 	}
